@@ -1,2 +1,2 @@
 [digitalocean]
-localhost ansible_connection=local
+localhost ansible_connection=local ansible_user=ratko

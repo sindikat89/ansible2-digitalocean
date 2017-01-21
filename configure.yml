@@ -1,0 +1,7 @@
+---
+- hosts: web
+  remote_user: root
+  gather_facts: false
+
+  roles:
+      - role: config_servers
