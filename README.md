@@ -25,6 +25,7 @@ Server provisioning playbook for DigitalOcean droplets
   * **cat ./REMOTE.pub|xclip -i -selection clipboard**
 9. Open <a href="https://m.do.co/c/0a8cc915e6ef">DigitalOcean</a> account in browser and navigate to SETTINGS -> SECURITY
 10. ADD New SSH Key name: REMOTE and paste SSH key content
+11. FInal step: Edit the **ansible_user** variable in the **hosts** file to your Linux user
 
 Finally in CLI navigate to the cloned projects main directory and run 'ansible-playbook site.yml'
 
