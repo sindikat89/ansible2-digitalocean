@@ -4,3 +4,6 @@
   with_items:
     - python-apt
     - python-pycurl
+
+- name: Disable the firewall (since this is for local dev only).
+  service: name=ufw state=stopped
