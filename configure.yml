@@ -4,7 +4,8 @@
   gather_facts: true
 
   vars_files:
-      - vars/main.yml
+      - vars/mysql.yml
+      - vars/firewall.yml
 
   pre_tasks:
     - name: Wait for port 22 to become available.
@@ -16,3 +17,6 @@
     - role: config_servers
     - role: apache_php
     - role: geerlingguy.mysql
+    - role: geerlingguy.firewall
+    - role: geerlingguy.composer
+    - role: geerlingguy.redis
