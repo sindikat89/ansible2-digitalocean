@@ -16,7 +16,7 @@
   roles:
     - role: config_servers
     - role: apache_php
-    - role: geerlingguy.mysql
     - role: geerlingguy.firewall
-    - role: geerlingguy.composer
-    - role: geerlingguy.redis
+    - { role: geerlingguy.mysql, when: inventory_hostname == 'lamp' }
+    - { role: geerlingguy.composer, when: inventory_hostname == 'lamp'  }
+    - { role: geerlingguy.redis, when: inventory_hostname == 'lamp'  }

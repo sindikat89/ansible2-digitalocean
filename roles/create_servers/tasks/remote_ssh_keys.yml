@@ -1,0 +1,17 @@
+- name: Ensure remote ssh key exists
+  user: >
+    name={{ ansible_user }}
+    generate_ssh_key=yes
+    ssh_key_file=.ssh/REMOTE
+  register: remote_key_created
+  when: new_host is defined
+
+- name: Ensure remote key exists at DigitalOcean
+  digital_ocean: >
+    state=present
+    command=ssh
+    name=REMOTE
+    ssh_pub_key={{ lookup('file', '~/.ssh/REMOTE.pub') }}
+    api_token={{ do_token }}
+  register: lamp_ssh_key
+  when: remote_key_created is defined

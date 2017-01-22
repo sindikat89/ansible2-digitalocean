@@ -5,14 +5,13 @@
     - python-apt
     - python-pycurl
 
-- name: Disable the firewall (since this is for local dev only).
-  service: name=ufw state=stopped
-
+# The following is to install MySQL-Python dependencies, using a manually linked Python2.7
 - name: install python mysql bindings
   apt:
     name: python2.7
     state: present
     update_cache: yes
+  when: inventory_hostname == 'lamp'
 
 - name: create python symlink
   file:
@@ -21,3 +20,4 @@
     owner: root
     group: root
     state: link
+  when: inventory_hostname == 'lamp'

@@ -1,0 +1,4 @@
+---
+- include: local_ssh_keys.yml
+- include: servers.yml
+  when: my_ssh_key is defined

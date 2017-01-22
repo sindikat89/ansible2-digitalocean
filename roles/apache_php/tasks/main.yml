@@ -28,3 +28,9 @@
 - name: Enable Apache rewrite module (required for Laravel).
   apache2_module: name=rewrite state=present
   notify: restart apache
+
+
+   bash
+      - openssl
+      - libssl-dev
+      - libssl-doc
