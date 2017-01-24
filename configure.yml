@@ -1,7 +1,26 @@
 ---
 - hosts: web
   remote_user: root
-  gather_facts: false
+  gather_facts: true
+
+  vars_files:
+    - vars/mysql.yml
+    - vars/firewall.yml
+
+  vars:
+    - update_apt_cache: yes
+
+  pre_tasks:
+    - name: Wait for port 22 to become available.
+      local_action: "wait_for port=22 host={{ ansible_host }}"
+    - name: Update apt cache if needed.
+      apt: update_cache=yes cache_valid_time=3600
 
   roles:
-      - role: config_servers
+    - role: config_servers
+    - role: geerlingguy.firewall
+    - role: apache_php
+    - { role: geerlingguy.mysql, when: inventory_hostname == 'lamp' }
+    - { role: geerlingguy.composer, when: inventory_hostname == 'lamp'  }
+    - { role: geerlingguy.redis, when: inventory_hostname == 'lamp'  }
+    - { role: geerlingguy.jenkins, when: inventory_hostname == 'jenkins'  }

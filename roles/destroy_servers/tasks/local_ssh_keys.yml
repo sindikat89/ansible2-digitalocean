@@ -1,0 +1,17 @@
+---
+- name: Ensure Local ssh key exists
+  user: >
+    name={{ ansible_user }}
+    generate_ssh_key=yes
+    ssh_key_file=.ssh/LOCAL
+  register: local_key_created
+
+- name: Ensure local key exists at DigitalOcean
+  digital_ocean: >
+    state=present
+    command=ssh
+    name=LOCAL
+    ssh_pub_key={{ lookup('file', '~/.ssh/LOCAL.pub') }}
+    api_token={{ do_token }}
+  register: my_ssh_key
+  when: local_key_created is defined

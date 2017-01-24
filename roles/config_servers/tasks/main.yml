@@ -4,3 +4,20 @@
   with_items:
     - python-apt
     - python-pycurl
+
+# The following is to install MySQL-Python dependencies, using a manually linked Python2.7
+- name: install python mysql bindings
+  apt:
+    name: python2.7
+    state: present
+    update_cache: yes
+  when: inventory_hostname == 'lamp'
+
+- name: create python symlink
+  file:
+    src: /usr/bin/python2.7
+    dest: /usr/bin/python
+    owner: root
+    group: root
+    state: link
+  when: inventory_hostname == 'lamp'

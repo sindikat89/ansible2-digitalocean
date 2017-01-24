@@ -1,0 +1,30 @@
+---
+- name: Add ondrej repository for later versions of PHP.
+  apt_repository: repo='ppa:ondrej/php' update_cache=yes
+
+- name: "Install Apache, PHP, and other dependencies."
+  apt: "name={{ item }} state=present"
+  with_items:
+    - git
+    - curl
+    - unzip
+    - sendmail
+    - apache2
+    - php7.1-common
+    - php7.1-cli
+    - php7.1-dev
+    - php7.1-gd
+    - php7.1-curl
+    - php7.1-json
+    - php7.1-opcache
+    - php7.1-xml
+    - php7.1-mbstring
+    - php7.1-pdo
+    - php7.1-mysql
+    - php-apcu
+    - libpcre3-dev
+    - libapache2-mod-php7.1
+
+- name: Enable Apache rewrite module (required for Laravel).
+  apache2_module: name=rewrite state=present
+  notify: restart apache

@@ -1,67 +1,12 @@
 ---
-- name: ensure ssh key exists
-  user: >
-    name={{ ansible_user }}
-    generate_ssh_key=yes
-    ssh_key_file=.ssh/LOCAL
-  register: local_key_created
-
-- name: ensure key exists at DigitalOcean
-  digital_ocean: >
-    state=present
-    command=ssh
-    name=LOCAL
-    ssh_pub_key={{ lookup('file', '~/.ssh/LOCAL.pub') }}
-    api_token={{ do_token }}
-  register: my_ssh_key
-  when: local_key_created is defined
-
-- name: ensure droplet one exists
-  digital_ocean: >
-    state=present
-    command=droplet
-    name=nikolovski
-    private_networking=yes
-    size_id=512mb
-    image_id=ubuntu-16-04-x64
-    region_id=nyc1
-    ssh_key_ids={{ my_ssh_key.ssh_key.id }}
-    api_token={{ do_token }}
-    wait=yes
-    unique_name=yes
-  register: do
+- include: local_ssh_keys.yml
+- include: servers.yml
   when: my_ssh_key is defined
-
-- name: Add new host to our inventory.
-  add_host: >
-    hostname=lamp
-    ansible_host={{ do.droplet.ip_address }}
-    ansible_port=22
-    groups=web
-    ansible_connection=ssh
-    ansible_user=root
-    ansible_become=true
-    ansible_private_key_file='~/.ssh/REMOTE'
-    ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-    ansible_python_interpreter=/usr/bin/python3
-  register: new_host
-  when: do.droplet is defined
-
-- name: ensure ssh key exists
-  user: >
-    name={{ ansible_user }}
-    generate_ssh_key=yes
-    ssh_key_file=.ssh/REMOTE
-  register: second_key_created
-  when: new_host is defined
-
-
-- name: ensure key exists at DigitalOcean
-  digital_ocean: >
-    state=present
-    command=ssh
-    name=REMOTE
-    ssh_pub_key={{ lookup('file', '~/.ssh/REMOTE.pub') }}
-    api_token={{ do_token }}
-  register: lamp_ssh_key
-  when: second_key_created is defined
+- include: hosts.yml
+  when:
+    - lamp.droplet is defined
+    - jenkins.droplet is defined
+- include: remote_ssh_keys.yml
+  when:
+    - new_lamp_host is defined
+    - new_jenkins_host is defined
