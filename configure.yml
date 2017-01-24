@@ -4,8 +4,11 @@
   gather_facts: true
 
   vars_files:
-      - vars/mysql.yml
-      - vars/firewall.yml
+    - vars/mysql.yml
+    - vars/firewall.yml
+
+  vars:
+    - update_apt_cache: yes
 
   pre_tasks:
     - name: Wait for port 22 to become available.
@@ -15,8 +18,9 @@
 
   roles:
     - role: config_servers
-    - role: apache_php
     - role: geerlingguy.firewall
+    - role: apache_php
     - { role: geerlingguy.mysql, when: inventory_hostname == 'lamp' }
     - { role: geerlingguy.composer, when: inventory_hostname == 'lamp'  }
     - { role: geerlingguy.redis, when: inventory_hostname == 'lamp'  }
+    - { role: geerlingguy.jenkins, when: inventory_hostname == 'jenkins'  }
