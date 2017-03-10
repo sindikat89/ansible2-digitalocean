@@ -1,0 +1,31 @@
+---
+- hosts: jenkins
+  remote_user: root
+  gather_facts: true
+
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - name: Install plugins without a specific version
+      jenkins_plugin:
+        name: "{{ item.key }}"
+        params: "{{ my_jenkins_params }}"
+      register: my_jenkins_plugin
+      with_dict: "{{ my_jenkins_plugins }}"
+
+    - name: Initiate the fact
+      set_fact:
+        jenkins_restart_required: no
+
+    - name: Check if restart is required by any of the versioned plugins
+      set_fact:
+        jenkins_restart_required: yes
+      when: item.changed
+      with_items: "{{ my_jenkins_plugin.results }}"
+
+    - name: Restart Jenkins if required
+      service:
+        name: jenkins
+        state: restarted
+      when: jenkins_restart_required
